@@ -29,7 +29,7 @@ public class MenuSettings : MonoBehaviour
     public TabType tabType;
     [HideInInspector] public TabGroup tabGroup;
 
-    [HideInInspector] public List<TabData> Tabs = new List<TabData>();
+    [HideInInspector] public List<TabButton> Tabs = new List<TabButton>();
 
     [HideInInspector] public float PageLoadInTime;
 }
@@ -107,7 +107,7 @@ public class MenuSettingsEditor : Editor
                 {
                     if (tabsShown.Count <= i)
                     {
-                        tabsShown.Add(false);
+                        tabsShown.Add(true);
                     }
                     tabsShown[i] = EditorGUILayout.Foldout(tabsShown[i], $"Element {i}");
                     if (tabsShown[i])
@@ -115,71 +115,57 @@ public class MenuSettingsEditor : Editor
                         ++EditorGUI.indentLevel;
                         var tab = script.Tabs[i];
                         tab.Title = EditorGUILayout.TextField("Title", tab.Title);
-                        tab.Index = EditorGUILayout.IntField("Index", tab.Index);
+                        //tab.Index = EditorGUILayout.IntField("Index", tab.Index);
                         tab.ConnectedPage = (GameObject)EditorGUILayout.ObjectField("ConnectedPage", tab.ConnectedPage, typeof(GameObject), true);
                         --EditorGUI.indentLevel;
                     }
                 }
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("+", GUILayout.Width(20)))
+                if (!Application.isPlaying && GUILayout.Button("+", GUILayout.Width(20)))
                 {
-                    script.Tabs.Add(new TabData());
+                    /*script.Tabs.Add(new TabButton());
+                    script.tabGroup.CreateTab(script.Tabs[^1]);*/
+                    script.tabGroup.CreateTab();
+                    //script.tabGroup.tabButtons = script.Tabs;
                 }
-                if (GUILayout.Button("-", GUILayout.Width(20)))
+                if (!Application.isPlaying && script.Tabs.Count > 0 && GUILayout.Button("-", GUILayout.Width(20)))
                 {
-                    script.tabGroup.DeleteTab(script.Tabs[^1]);
-                    script.Tabs.Remove(script.Tabs[^1]);
+                    DestroyImmediate(script.Tabs[^1].GameObject);
+                    script.Tabs.RemoveAt(script.Tabs.Count - 1);
+                    //script.tabGroup.tabButtons = script.Tabs;
                 }
                 EditorGUILayout.EndHorizontal();
                 --EditorGUI.indentLevel;
             }
             --EditorGUI.indentLevel;
         }
-        for (int i = script.Tabs.Count - 1; i >= 0; --i)
+        if (!Application.isPlaying)
         {
-            if(script.tabGroup.TabHolder.childCount < script.Tabs.Count)
+            for (int i = script.Tabs.Count - 1; i >= 0; --i)
             {
-                script.tabGroup.CreateTab(script.Tabs[i]);
-            }
-            else if(script.tabGroup.TabHolder.childCount > script.Tabs.Count)
-            {
-                script.tabGroup.DeleteTab(script.Tabs[i]);
-            }
-            else
-            {
-                script.tabGroup.EditTab(script.Tabs[i]);
+                if (script.tabGroup.TabHolder.childCount < script.Tabs.Count)
+                {
+                    script.tabGroup.CreateTab(script.Tabs[i]);
+                }
+                else if (script.tabGroup.TabHolder.childCount > script.Tabs.Count)
+                {
+                    script.tabGroup.DeleteTab(script.Tabs[i]);
+                }
+                else
+                {
+                    script.tabGroup.EditTab(script.Tabs[i]);
+                }
             }
         }
-
+        //script.tabGroup.tabButtons = script.Tabs;
         showPageSettings = EditorGUILayout.Foldout(showPageSettings, "Page Settings", myFoldoutStyle);
         if (showPageSettings)
         {
             ++EditorGUI.indentLevel;
-            script.PageLoadInTime = EditorGUILayout.Slider(new GUIContent("Load in animation speed: ", "Seconds it takes for all the cards to load in"), script.PageLoadInTime, 0, 0.5f);
+            script.PageLoadInTime = EditorGUILayout.Slider(new GUIContent("Load in animation speed: ", "Seconds it takes for all the cards to load in"), script.PageLoadInTime, 0, 0.1f);
+            PageLoadIn.LoadTime = script.PageLoadInTime;
             --EditorGUI.indentLevel;
         }
     }
-    /*private void OnValidate()
-    {
-
-        MenuSettings script = (MenuSettings)target;
-        SerializedObject serializedObject = new SerializedObject(target);
-
-        for (int i = script.Tabs.Count - 1; i >= 0; --i)
-        {
-            if (script.tabGroup.TabHolder.childCount < script.Tabs.Count)
-            {
-                script.tabGroup.CreateTab(script.Tabs[i]);
-            }
-            else if (script.tabGroup.TabHolder.childCount > script.Tabs.Count)
-            {
-                script.tabGroup.DeleteTab(script.Tabs[i]);
-            }
-            else
-            {
-                script.tabGroup.EditTab(script.Tabs[i]);
-            }
-        }
-    }*/
 }
 #endif

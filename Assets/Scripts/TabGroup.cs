@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 public class TabGroup : MonoBehaviour
 {
-    /*[HideInInspector]*/ public List<TabButton> tabButtons = new List<TabButton>();
+    /*[HideInInspector]*/ //public List<TabButton> tabButtons = new List<TabButton>();
     [HideInInspector] public Sprite tabIdle = null;
     [HideInInspector] public Sprite tabHover = null;
     [HideInInspector] public Sprite tabActive = null;
@@ -15,38 +15,63 @@ public class TabGroup : MonoBehaviour
     [HideInInspector] public List<GameObject> objectsToSwap = new List<GameObject>();
     [HideInInspector] public Transform TabHolder;
     [HideInInspector] public GameObject TabPrefab;
-    public void CreateTab(TabData data)
+    [SerializeField] private PageLoadIn pageLoad;
+    [SerializeField] private MenuSettings menuSettings;
+    public void CreateTab(TabButton data)
     {
+        if (Application.isPlaying)
+        {
+            return;
+        }
         GameObject t = Instantiate(TabPrefab, TabHolder);
         t.name = data.Title;
         //t.transform.SetSiblingIndex(data.Index);
         t.GetComponentInChildren<TextMeshProUGUI>().text = data.Title;
-        TabButton currentTab = t.GetComponent<TabButton>();
-        currentTab.tabGroup = this;
-        currentTab.data = data;
-        tabButtons.Add(currentTab);
+        data.tabGroup = this;
+        data.GameObject = t;
     }
-    public void EditTab(TabData data)
+    public void CreateTab()
     {
-        TabButton b = tabButtons.Find(x => x.data == data);
-        GameObject t = b.gameObject;
+        if (Application.isPlaying)
+        {
+            return;
+        }
+        GameObject t = Instantiate(TabPrefab, TabHolder);
+        TabButton data = t.GetComponent<TabButton>();
+        t.name = data.Title;
+        //t.transform.SetSiblingIndex(data.Index);
+        t.GetComponentInChildren<TextMeshProUGUI>().text = data.Title;
+        data.tabGroup = this;
+        data.GameObject = t;
+        menuSettings.Tabs.Add(data);
+    }
+    public void EditTab(TabButton data)
+    {
+        if (Application.isPlaying || data == null)
+        {
+            return;
+        }
+        GameObject t = data.GameObject;
         t.name = data.Title;
         //t.transform.SetSiblingIndex(data.Index);
         t.GetComponentInChildren<TextMeshProUGUI>().text = data.Title;
     }
-    public void DeleteTab(TabData data)
+    public void DeleteTab(TabButton data)
     {
-        TabButton b = tabButtons.Find(x => x.data == data);
-        tabButtons.Remove(b);
-        DestroyImmediate(b.gameObject);
+        if (Application.isPlaying)
+        {
+            return;
+        }
+        menuSettings.Tabs.Remove(data);
+        DestroyImmediate(data.gameObject);
     }
     public void Subscribe(TabButton button)
     {
-        if (tabButtons == null)
+        if (menuSettings.Tabs == null)
         {
-            tabButtons = new List<TabButton>();
+            menuSettings.Tabs = new List<TabButton>();
         }
-        tabButtons.Add(button);
+        menuSettings.Tabs.Add(button);
         ResetTabs();
     }
 
@@ -55,8 +80,14 @@ public class TabGroup : MonoBehaviour
         ResetTabs();
         if (selectedTab == null || button != selectedTab)
         {
-            //button.background.sprite = tabHover;
-            button.background.color = TabHover;
+            if (menuSettings.tabType == TabType.Sprite)
+            {
+                button.background.sprite = tabHover;
+            }
+            else
+            {
+                button.background.color = TabHover;
+            }
         }
     }
     public void OnTabExit(TabButton button)
@@ -72,24 +103,37 @@ public class TabGroup : MonoBehaviour
         selectedTab = button;
         selectedTab.Select();
         ResetTabs();
-        //button.background.sprite = tabActive;
-        button.background.color = TabActive;
-        int index = button.transform.GetSiblingIndex() - 1;
-        for (int i = 0; i < objectsToSwap.Count; ++i)
+        if (menuSettings.tabType == TabType.Sprite)
         {
-            objectsToSwap[i].SetActive(i == index);
+            button.background.sprite = tabActive;
         }
+        else
+        {
+            button.background.color = TabActive;
+        }
+        int index = button.ConnectedPage.transform.GetSiblingIndex();
+        for (int i = 0; i < menuSettings.Tabs.Count; ++i)
+        {
+            menuSettings.Tabs[i].ConnectedPage.SetActive(menuSettings.Tabs[i] == button);
+        }
+        pageLoad.Selected(button.ConnectedPage.transform);
     }
     public void ResetTabs()
     {
-        foreach (TabButton button in tabButtons)
+        foreach (TabButton button in menuSettings.Tabs)
         {
             if (selectedTab != null && button == selectedTab)
             {
                 continue;
             }
-            //button.background.sprite = tabIdle;
-            button.background.color = TabIdle;
+            if (menuSettings.tabType == TabType.Sprite)
+            {
+                button.background.sprite = tabIdle;
+            }
+            else
+            {
+                button.background.color = TabIdle;
+            }
         }
     }
 }

@@ -6,13 +6,18 @@ using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Image))]
+[System.Serializable]
 public class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler
 {
-    public TabGroup tabGroup;
-    public Image background;
-    public UnityEvent onTabSelected;
-    public UnityEvent onTabDeselected;
-    public TabData data;
+    
+    [HideInInspector] public TabGroup tabGroup;
+    /*[HideInInspector]*/ public Image background;
+    [HideInInspector] public UnityEvent onTabSelected;
+    [HideInInspector] public UnityEvent onTabDeselected;
+    public string Title;
+    public int Index;
+    public GameObject ConnectedPage;
+    public GameObject GameObject;
     public void OnPointerClick(PointerEventData eventData)
     {
         tabGroup.OnTabSelected(this);
@@ -30,7 +35,11 @@ public class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerClickHandl
 
     private void Start()
     {
-        background = GetComponent<Image>();
+        //background = GetComponent<Image>();
+        if(tabGroup == null)
+        {
+            tabGroup = GameObject.Find("Canvas").GetComponent<TabGroup>();
+        }
         tabGroup.Subscribe(this);
     }
 

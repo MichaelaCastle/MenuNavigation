@@ -8,6 +8,7 @@ public class PageLoadIn : MonoBehaviour
     private bool animating;
     private Queue<Transform> queue;
     public bool loaded;
+    public static float LoadTime;
     private void Start()
     {
         animating = false;
@@ -82,7 +83,7 @@ public class PageLoadIn : MonoBehaviour
             {
                 i = 11;
             }
-            yield return new WaitForSeconds(0.0025f);
+            yield return new WaitForSeconds(LoadTime);
         }
         t.localScale = Vector3.one;
         StopCoroutine(ScaleUp(t));
