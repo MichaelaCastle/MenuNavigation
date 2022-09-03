@@ -3558,7 +3558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.7656604, g: 1, b: 0.73, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4739,9 +4739,9 @@ MonoBehaviour:
   tabIdle: {fileID: 0}
   tabHover: {fileID: 0}
   tabActive: {fileID: 0}
-  TabIdle: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  TabHover: {r: 0.7, g: 0.7, b: 0.7, a: 1}
-  TabActive: {r: 0.3, g: 0.3, b: 0.3, a: 1}
+  TabIdle: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  TabHover: {r: 0.69803923, g: 0.69803923, b: 0.69803923, a: 1}
+  TabActive: {r: 0.29803923, g: 0.29803923, b: 0.29803923, a: 1}
   selectedTab: {fileID: 0}
   objectsToSwap: []
   TabHolder: {fileID: 2049093620}
@@ -4766,7 +4766,8 @@ MonoBehaviour:
   - {fileID: 1107135669}
   - {fileID: 1717674489}
   - {fileID: 1664241441}
-  PageLoadInTime: 0
+  PageLoadInTime: 0.0024
+  TabFrameImage: {fileID: 1646354574}
 --- !u!222 &2074228227
 CanvasRenderer:
   m_ObjectHideFlags: 0

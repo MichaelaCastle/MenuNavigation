@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+
 public class TabGroup : MonoBehaviour
 {
     /*[HideInInspector]*/ //public List<TabButton> tabButtons = new List<TabButton>();
@@ -54,7 +56,13 @@ public class TabGroup : MonoBehaviour
         GameObject t = data.GameObject;
         t.name = data.Title;
         //t.transform.SetSiblingIndex(data.Index);
-        t.GetComponentInChildren<TextMeshProUGUI>().text = data.Title;
+        TextMeshProUGUI text = t.GetComponentInChildren<TextMeshProUGUI>();
+        text.text = data.Title;
+        text.font = menuSettings.tabPrefabData.Text.font;
+        text.color = menuSettings.tabPrefabData.Text.color;
+        Image image = t.GetComponentInChildren<Image>();
+        image.sprite = menuSettings.tabPrefabData.Image.sprite;
+        image.pixelsPerUnitMultiplier = menuSettings.tabPrefabData.Image.pixelsPerUnitMultiplier;
     }
     public void DeleteTab(TabButton data)
     {
