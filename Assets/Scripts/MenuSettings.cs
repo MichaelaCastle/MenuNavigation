@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -28,6 +29,13 @@ public class TabPrefabData
     public Image Image;
 }
 [System.Serializable]
+public class CardData
+{
+    public string Name;
+    public Button Button;
+    public UnityEvent OnClick;
+}
+[System.Serializable]
 [RequireComponent (typeof(TabGroup))]
 public class MenuSettings : MonoBehaviour
 {
@@ -41,6 +49,7 @@ public class MenuSettings : MonoBehaviour
     [HideInInspector] public Image TabFrameImage;
     [HideInInspector] public bool UsingCustomTab;
     [HideInInspector] public TabPrefabData tabPrefabData;
+    [HideInInspector] public List<PageData> Pages;
 }
 #if UNITY_EDITOR
 [CustomEditor(typeof(MenuSettings))]
@@ -48,10 +57,13 @@ public class MenuSettingsEditor : Editor
 {
     public static bool showTabSettings = true;
     public static List<bool> tabsShown = new List<bool>();
+    public static List<bool> pagesShown = new List<bool>();
+    public static List<List<bool>> pageCardShown = new List<List<bool>>();
     public static bool showTabs = true;
     public static bool showPageSettings = true;
     public static bool showTabTextInfo = true;
     public static bool showHolderAndFrame = true;
+    public static bool showPages = true;
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector(); // for other non-HideInInspector fields
@@ -256,11 +268,72 @@ public class MenuSettingsEditor : Editor
         if (showPageSettings)
         {
             ++EditorGUI.indentLevel;
-            script.PageLoadInTime = EG.Slider(new GUIContent("Load in animation speed: ", "Seconds it takes for all the cards to load in"), script.PageLoadInTime, 0, 0.1f);
+            script.PageLoadInTime = EG.Slider(new GUIContent("Load animation speed: ", "Seconds it takes for all the cards to load in"), script.PageLoadInTime, 0, 0.1f);
             PageLoadIn.LoadTime = script.PageLoadInTime;
             if (!Application.isPlaying)
             {
                 PageLoadIn.LoadDirection = EG.Toggle(new GUIContent("Load right to left", "The first card to load in will be the bottom right card"), PageLoadIn.LoadDirection);
+            }
+
+            showPages = EG.Foldout(showPages, "Pages", myFoldoutStyle2);
+            if (showPages)
+            {
+                ++EditorGUI.indentLevel;
+                for (int i = 0; i < script.Pages.Count; ++i)
+                {
+                    if(pageCardShown.Count <= i)
+                    {
+                        pageCardShown.Add(new List<bool>());
+                        pageCardShown[i].Add(true);
+                    }
+                    pageCardShown[i][0] = EG.Foldout(pageCardShown[i][0], $"Page {i}");
+                    if (pageCardShown[i][0])
+                    {
+                        ++EditorGUI.indentLevel;
+                        if(script.Pages[i].Cards == null)
+                        {
+                            script.Pages[i].Cards = new List<CardData>();
+                        }
+                        for(int c = 0; c < script.Pages[i].Cards.Count; ++c)
+                        {
+                            if (pageCardShown[i].Count - 1 <= c)
+                            {
+                                pageCardShown[i].Add(false);
+                            }
+                            pageCardShown[i][c + 1] = EG.Foldout(pageCardShown[i][c + 1], $"Card {c + 1}");
+                            if(pageCardShown[i][c + 1])
+                            {
+                                var card = script.Pages[i].Cards[c];
+                                ++EditorGUI.indentLevel;
+                                card.Name = EG.TextField("Name", card.Name);
+                                card.Button = card.Button.Field<Button>();
+                                --EditorGUI.indentLevel;
+                            }
+                        }
+                        EG.BeginHorizontal();
+                        "".Label(30);
+                        if (!Application.isPlaying && GUILayout.Button("+", GUILayout.Width(20)))
+                        {
+                            script.Pages[i].Cards.Add(new CardData());
+                        }
+                        if (!Application.isPlaying && script.Pages[i].Cards.Count > 0 && GUILayout.Button("-", GUILayout.Width(20)))
+                        {
+                            script.Pages[i].Cards.RemoveAt(script.Pages[i].Cards.Count - 1);
+                        }
+                        EG.EndHorizontal();
+                        --EditorGUI.indentLevel;
+                    }
+                }
+                EG.BeginHorizontal();
+                //"".Label(20);
+                if (!Application.isPlaying && GUILayout.Button("+", GUILayout.Width(20)))
+                {
+                }
+                if (!Application.isPlaying && script.Pages.Count > 0 && GUILayout.Button("-", GUILayout.Width(20)))
+                {
+                }
+                EG.EndHorizontal();
+                --EditorGUI.indentLevel;
             }
             --EditorGUI.indentLevel;
         }
