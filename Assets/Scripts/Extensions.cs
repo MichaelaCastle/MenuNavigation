@@ -20,6 +20,14 @@ public static class Extensions
     {
         return (T)EG.ObjectField(obj: (T)data, objType: typeof(T), allowSceneObjects: true, GUILayout.MinWidth(width));
     }
+    public static T Field<T>(this Object data) where T : Object
+    {
+        return (T)EG.ObjectField(obj: (T)data, objType: typeof(T), allowSceneObjects: true);
+    }
+    public static Color Field(this Color data, int width)
+    {
+        return EG.ColorField(data, GUILayout.MinWidth(width));
+    }
     public static void Label(this string label)
     {
         EG.LabelField(label);

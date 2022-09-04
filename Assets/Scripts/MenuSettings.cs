@@ -88,6 +88,7 @@ public class MenuSettingsEditor : Editor
         if (script.tabGroup == null)
         {
             script.tabGroup = script.gameObject.GetComponent<TabGroup>();
+            script.tabGroup.menuSettings = script;
         }
 
         showTabSettings = EG.Foldout(showTabSettings, "Tab Button Settings", myFoldoutStyle);
@@ -98,7 +99,7 @@ public class MenuSettingsEditor : Editor
             if (showHolderAndFrame)
             {
                 ++EditorGUI.indentLevel;
-                EG.LabelField("Tab Holder:");
+                "Tab Holder:".Label();
                 ++EditorGUI.indentLevel;
                 script.tabGroup.TabHolder = script.tabGroup.TabHolder.Field<Transform>("Holder", "Where the tabs will be spawned");
                 Mask holderMask = script.tabGroup.TabHolder.GetComponent<Mask>();
@@ -110,49 +111,49 @@ public class MenuSettingsEditor : Editor
                     Image holderImage = script.tabGroup.TabHolder.GetComponent<Image>();
                     holderImage.sprite = holderImage.sprite.Field<Sprite>(85);
                     "Color: ".Label(40);
-                    holderImage.color = EG.ColorField(holderImage.color, GUILayout.MinWidth(70));
+                    holderImage.color = holderImage.color.Field(70);
                     EG.EndHorizontal();
                 }
                 --EditorGUI.indentLevel;
-                EG.LabelField("");
-                EG.LabelField("Tab Frame:");
+                "".Label();
+                "Tab Frame:".Label();
                 ++EditorGUI.indentLevel;
                 script.TabFrameImage = script.TabFrameImage.Field<Image>("Frame", "Border around the holder");
                 EG.BeginHorizontal();
                 "Sprite: ".Label(40);
                 script.TabFrameImage.sprite = script.TabFrameImage.sprite.Field<Sprite>(85);
                 "Color: ".Label(40);
-                script.TabFrameImage.color = EG.ColorField(script.TabFrameImage.color, GUILayout.MinWidth(70));
+                script.TabFrameImage.color = script.TabFrameImage.color.Field(70);
                 EG.EndHorizontal();
                 --EditorGUI.indentLevel;
                 EG.LabelField("");
                 --EditorGUI.indentLevel;
             }
-            script.tabGroup.TabPrefab = (GameObject)EG.ObjectField("Prefab", script.tabGroup.TabPrefab, typeof(GameObject), true);
+            script.tabGroup.TabPrefab = script.tabGroup.TabPrefab.Field<GameObject>("Prefab", "What each tab will look like");
             script.tabType = (TabType)EG.EnumPopup("Tab Type", script.tabType);
             
             //GUILayout.FlexibleSpace();
             switch (script.tabType)
             {
                 case TabType.Color:
-                    EG.LabelField("Colors:");
+                    "Colors:".Label();
                     EG.BeginHorizontal();
-                    EG.LabelField("Idle: ", GUILayout.MinWidth(40));
-                    script.tabGroup.TabIdle = EG.ColorField(script.tabGroup.TabIdle, GUILayout.MinWidth(70));
-                    EG.LabelField("Hover: ", GUILayout.MinWidth(50));
-                    script.tabGroup.TabHover = EG.ColorField(script.tabGroup.TabHover, GUILayout.MinWidth(70));
-                    EG.LabelField("Active: ", GUILayout.MinWidth(60));
-                    script.tabGroup.TabActive = EG.ColorField(script.tabGroup.TabActive, GUILayout.MinWidth(70));
+                    "Idle: ".Label(40);
+                    script.tabGroup.TabIdle = script.tabGroup.TabIdle.Field(70);
+                    "Hover: ".Label(50);
+                    script.tabGroup.TabHover = script.tabGroup.TabHover.Field(70);
+                    "Active: ".Label(60);
+                    script.tabGroup.TabActive = script.tabGroup.TabActive.Field(70);
                     break;
                 case TabType.Sprite:
-                    EG.LabelField("Images:");
+                    "Images:".Label();
                     EG.BeginHorizontal();
-                    EG.LabelField("Idle: ", GUILayout.MinWidth(40));
-                    script.tabGroup.tabIdle = (Sprite)EG.ObjectField(script.tabGroup.tabIdle, typeof(Sprite), true, GUILayout.MinWidth(85));
-                    EG.LabelField("Hover: ", GUILayout.MinWidth(50));
-                    script.tabGroup.tabHover = (Sprite)EG.ObjectField(script.tabGroup.tabHover, typeof(Sprite), true, GUILayout.MinWidth(85));
-                    EG.LabelField("Active: ", GUILayout.MinWidth(60));
-                    script.tabGroup.tabActive = (Sprite)EG.ObjectField(script.tabGroup.tabActive, typeof(Sprite), true, GUILayout.MinWidth(85));
+                    "Idle: ".Label(40);
+                    script.tabGroup.tabIdle = script.tabGroup.tabIdle.Field<Sprite>(85);
+                    "Hover: ".Label(50);
+                    script.tabGroup.tabHover = script.tabGroup.tabHover.Field<Sprite>(85);
+                    "Active: ".Label(60);
+                    script.tabGroup.tabActive = script.tabGroup.tabActive.Field<Sprite>(85);
                     break;
             }
             EG.EndHorizontal();
@@ -165,12 +166,12 @@ public class MenuSettingsEditor : Editor
             if (script.UsingCustomTab)
             {
                 ++EditorGUI.indentLevel;
-                EG.LabelField("Prefab Setup: ", GUILayout.MinWidth(40));
+                "Prefab Setup: ".Label(40);
                 EG.BeginHorizontal();
-                EG.LabelField("Text: ", GUILayout.MinWidth(40));
-                script.tabPrefabData.Text = (TextMeshProUGUI)EG.ObjectField(script.tabPrefabData.Text, typeof(TextMeshProUGUI), true, GUILayout.MinWidth(85));
-                EG.LabelField("Image: ", GUILayout.MinWidth(40));
-                script.tabPrefabData.Image = (Image)EG.ObjectField(script.tabPrefabData.Image, typeof(Image), true, GUILayout.MinWidth(85));
+                "Text: ".Label(40);
+                script.tabPrefabData.Text = script.tabPrefabData.Text.Field<TextMeshProUGUI>(85);
+                "Image: ".Label(40);
+                script.tabPrefabData.Image = script.tabPrefabData.Image.Field<Image>(85);
                 EG.EndHorizontal();
                 --EditorGUI.indentLevel;
             }
@@ -183,22 +184,23 @@ public class MenuSettingsEditor : Editor
             if (showTabTextInfo)
             {
                 ++EditorGUI.indentLevel;
+                "Changes will not take effect during runtime".Label();
                 EG.BeginHorizontal();
-                EG.LabelField("Font: ", GUILayout.MinWidth(30));
-                script.tabPrefabData.Text.font = (TMP_FontAsset)EG.ObjectField(script.tabPrefabData.Text.font, typeof(TMP_FontAsset), true, GUILayout.MinWidth(85));
-                EG.LabelField("Text Color: ", GUILayout.MinWidth(60));
-                script.tabPrefabData.Text.color = EG.ColorField(script.tabPrefabData.Text.color, GUILayout.MinWidth(70));
+                "Font: ".Label(30);
+                script.tabPrefabData.Text.font = script.tabPrefabData.Text.font.Field<TMP_FontAsset>(85);
+                "Text Color: ".Label(60);
+                script.tabPrefabData.Text.color = script.tabPrefabData.Text.color.Field(70);
                 EG.EndHorizontal();
                 EG.BeginHorizontal();
-                EG.LabelField("Image Sprite", GUILayout.MinWidth(80));
-                script.tabPrefabData.Image.sprite = (Sprite)EG.ObjectField(script.tabPrefabData.Image.sprite, typeof(Sprite), true, GUILayout.MinWidth(70));
-                EG.LabelField("Pixels / Unit", GUILayout.MinWidth(80));
-                script.tabPrefabData.Image.pixelsPerUnitMultiplier = EG.FloatField(script.tabPrefabData.Image.pixelsPerUnitMultiplier, GUILayout.MinWidth(70));
+                "Image Sprite".Label(100);
+                script.tabPrefabData.Image.sprite = script.tabPrefabData.Image.sprite.Field<Sprite>(70);
+                //"Pixels / Unit".Label(80);
+                script.tabPrefabData.Image.pixelsPerUnitMultiplier = EG.FloatField("Pixels / Unit", script.tabPrefabData.Image.pixelsPerUnitMultiplier/*, GUILayout.MinWidth(150)*/);
                 EG.EndHorizontal();
                 --EditorGUI.indentLevel;
             }
             showTabs = EG.Foldout(showTabs, $"Tabs", myFoldoutStyle2);
-            if (showTabs)
+            if (showTabs && !Application.isPlaying)
             {
                 ++EditorGUI.indentLevel;
                 for (int i = 0; i < script.Tabs.Count; ++i)
@@ -213,24 +215,19 @@ public class MenuSettingsEditor : Editor
                         ++EditorGUI.indentLevel;
                         var tab = script.Tabs[i];
                         tab.Title = EG.TextField("Title", tab.Title);
-                        //tab.Index = EG.IntField("Index", tab.Index);
-                        tab.ConnectedPage = (GameObject)EG.ObjectField("ConnectedPage", tab.ConnectedPage, typeof(GameObject), true);
+                        tab.ConnectedPage = tab.ConnectedPage.Field<GameObject>("ConnectedPage", "What page should be displayed when this tab is selected");
                         --EditorGUI.indentLevel;
                     }
                 }
                 EG.BeginHorizontal();
                 if (!Application.isPlaying && GUILayout.Button("+", GUILayout.Width(20)))
                 {
-                    /*script.Tabs.Add(new TabButton());
-                    script.tabGroup.CreateTab(script.Tabs[^1]);*/
                     script.tabGroup.CreateTab();
-                    //script.tabGroup.tabButtons = script.Tabs;
                 }
                 if (!Application.isPlaying && script.Tabs.Count > 0 && GUILayout.Button("-", GUILayout.Width(20)))
                 {
                     DestroyImmediate(script.Tabs[^1].GameObject);
                     script.Tabs.RemoveAt(script.Tabs.Count - 1);
-                    //script.tabGroup.tabButtons = script.Tabs;
                 }
                 EG.EndHorizontal();
                 --EditorGUI.indentLevel;
@@ -255,13 +252,16 @@ public class MenuSettingsEditor : Editor
                 }
             }
         }
-        //script.tabGroup.tabButtons = script.Tabs;
         showPageSettings = EG.Foldout(showPageSettings, "Page Settings", myFoldoutStyle);
         if (showPageSettings)
         {
             ++EditorGUI.indentLevel;
             script.PageLoadInTime = EG.Slider(new GUIContent("Load in animation speed: ", "Seconds it takes for all the cards to load in"), script.PageLoadInTime, 0, 0.1f);
             PageLoadIn.LoadTime = script.PageLoadInTime;
+            if (!Application.isPlaying)
+            {
+                PageLoadIn.LoadDirection = EG.Toggle(new GUIContent("Load right to left", "The first card to load in will be the bottom right card"), PageLoadIn.LoadDirection);
+            }
             --EditorGUI.indentLevel;
         }
     }

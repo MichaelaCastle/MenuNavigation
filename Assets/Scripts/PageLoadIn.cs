@@ -9,6 +9,7 @@ public class PageLoadIn : MonoBehaviour
     private Queue<Transform> queue;
     public bool loaded;
     public static float LoadTime;
+    public static bool LoadDirection;
     private void Start()
     {
         animating = false;
@@ -31,42 +32,44 @@ public class PageLoadIn : MonoBehaviour
         {
             transfor.GetChild(i).localScale = Vector3.zero;
         }
-        /*for (int i = transfor.childCount - 1; i >= 0; --i)
+        if (!LoadDirection)
         {
-            if(transfor.GetChild(i).childCount > 0 &&
-               transfor.GetChild(i).GetComponent<Image>() == null*//* &&
-                (transfor.GetChild(i).name.Contains("col") ||
-                 transfor.GetChild(i).name.Contains("Button"))*//*)
+            for (int i = 0; i < transfor.childCount; ++i)
             {
-                Selected(transfor.GetChild(i));
-            }
+                if (transfor.GetChild(i).childCount > 0 &&
+                   transfor.GetChild(i).GetComponent<Image>() == null)
+                {
+                    Selected(transfor.GetChild(i));
+                }
 
-            if (animating)
-            {
-                queue.Enqueue(transfor.GetChild(i));
+                if (animating)
+                {
+                    queue.Enqueue(transfor.GetChild(i));
+                }
+                else
+                {
+                    StartCoroutine(ScaleUp(transfor.GetChild(i)));
+                }
             }
-            else
-            {
-                StartCoroutine(ScaleUp(transfor.GetChild(i)));
-            }
-        }*/
-        for (int i = 0; i < transfor.childCount; ++i)
+        }
+        else
         {
-            if (transfor.GetChild(i).childCount > 0 &&
-               transfor.GetChild(i).GetComponent<Image>() == null/* &&
-                (transfor.GetChild(i).name.Contains("col") ||
-                 transfor.GetChild(i).name.Contains("Button"))*/)
+            for (int i = transfor.childCount - 1; i >= 0; --i)
             {
-                Selected(transfor.GetChild(i));
-            }
+                if (transfor.GetChild(i).childCount > 0 &&
+                   transfor.GetChild(i).GetComponent<Image>() == null)
+                {
+                    Selected(transfor.GetChild(i));
+                }
 
-            if (animating)
-            {
-                queue.Enqueue(transfor.GetChild(i));
-            }
-            else
-            {
-                StartCoroutine(ScaleUp(transfor.GetChild(i)));
+                if (animating)
+                {
+                    queue.Enqueue(transfor.GetChild(i));
+                }
+                else
+                {
+                    StartCoroutine(ScaleUp(transfor.GetChild(i)));
+                }
             }
         }
     }

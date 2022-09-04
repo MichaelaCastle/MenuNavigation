@@ -18,7 +18,7 @@ public class TabGroup : MonoBehaviour
     [HideInInspector] public Transform TabHolder;
     [HideInInspector] public GameObject TabPrefab;
     [SerializeField] private PageLoadIn pageLoad;
-    [SerializeField] private MenuSettings menuSettings;
+    [HideInInspector] public MenuSettings menuSettings;
     public void CreateTab(TabButton data)
     {
         if (Application.isPlaying)
